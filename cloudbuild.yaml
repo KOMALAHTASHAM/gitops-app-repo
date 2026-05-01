@@ -1,0 +1,38 @@
+steps:
+  # Step 1: Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/gitops-repo/$REPO_NAME:$SHORT_SHA'
+      - '.'
+
+  # Step 2: Push image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/gitops-repo/$REPO_NAME:$SHORT_SHA'
+
+  # Step 3: Clone env-repo and update image tag
+  - name: 'gcr.io/cloud-builders/git'
+    secretEnv: ['GIT_TOKEN']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        git clone https://$$GIT_TOKEN@github.com/KOMALAHTASHAM/gitops-env-repo.git
+        cd gitops-env-repo
+        sed -i "s|image:.*|image: us-central1-docker.pkg.dev/$PROJECT_ID/gitops-repo/$REPO_NAME:$SHORT_SHA|g" deployment.yaml
+        git config user.email "cloudbuild@example.com"
+        git config user.name "Cloud Build"
+        git add deployment.yaml
+        git commit -m "Update image to $SHORT_SHA"
+        git push
+
+availableSecrets:
+  secretManager:
+  - versionName: projects/$PROJECT_ID/secrets/github-token/versions/latest
+    env: 'GIT_TOKEN'
+
+images:
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/gitops-repo/$REPO_NAME:$SHORT_SHA'
