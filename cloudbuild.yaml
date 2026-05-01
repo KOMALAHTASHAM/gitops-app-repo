@@ -36,3 +36,6 @@ availableSecrets:
 
 images:
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/gitops-repo/$REPO_NAME:$SHORT_SHA'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
