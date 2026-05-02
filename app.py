@@ -9,7 +9,7 @@ def home():
     <body style="font-family: Arial; text-align: center; margin-top: 100px; background-color: #f0f4f8;">
         <h1 style="color: #1a73e8;">GitOps Pipeline - Live!</h1>
         <p style="font-size: 18px;">Deployed via Cloud Build + GKE</p>
-        <p style="color: green; font-weight: bold;">Version 2.1</p>
+        <p style="color: green; font-weight: bold;">Version 2.2</p>
     </body>
     </html>
     """
